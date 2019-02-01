@@ -1,0 +1,93 @@
+package com.javarush.task.task17.task1710;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+/* 
+CRUD
+*/
+
+public class Solution {
+    public static List<Person> allPeople = new ArrayList<Person>();
+
+    static {
+        allPeople.add(Person.createMale("Иванов Иван", new Date()));  //сегодня родился    id=0
+        allPeople.add(Person.createMale("Петров Петр", new Date()));  //сегодня родился    id=1
+    }
+
+    public static void main(String[] args) {
+        switch (args[0]) {
+            case "-c" : {
+                String name = args[1];
+                String sex = args[2];
+                String pattern = "dd/MM/yyyy";
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+                Date birthDate = null;
+                try {
+                    birthDate = simpleDateFormat.parse(args[3]);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                Person person = null;
+                if (sex.equals("м")) {
+                    person = Person.createMale(name, birthDate);
+                } else if (sex.equals("ж")) {
+                    person = Person.createFemale(name, birthDate);
+                }
+                allPeople.add(person);
+                System.out.println(allPeople.size() - 1);
+                break;
+            }
+            case "-u" : {
+                int id = Integer.parseInt(args[1]);
+                String name = args[2];
+                String sex = args[3];
+                String pattern = "dd/MM/yyyy";
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+                Date birthDate = null;
+                try {
+                    birthDate = simpleDateFormat.parse(args[4]);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                Person person = null;
+                if (sex.equals("м")) {
+                    person = Person.createMale(name, birthDate);
+                } else if (sex.equals("ж")) {
+                    person = Person.createFemale(name, birthDate);
+                }
+                allPeople.set(id, person);
+                break;
+            }
+            case  "-d" : {
+                int id = Integer.parseInt(args[1]);
+                Person person = allPeople.get(id);
+                person.setName(null);
+                person.setSex(null);
+                person.setBirthDate(null);
+                allPeople.set(id, person);
+                break;
+            }
+            case  "-i" : {
+                int id = Integer.parseInt(args[1]);
+                Person person = allPeople.get(id);
+                String name = person.getName();
+                Sex sex = person.getSex();
+                String sexStr = "";
+                if (sex.equals(Sex.MALE)) {
+                    sexStr = "м";
+                } else if (sex.equals(Sex.FEMALE)) {
+                    sexStr = "ж";
+                }
+                Date birthDate = person.getBirthDate();
+                String birthDateStr = new SimpleDateFormat("dd-MMM-yyyy").format(birthDate);
+                System.out.println(name + " " + sexStr + " " + birthDateStr);
+                break;
+            }
+
+        }
+    }
+}
