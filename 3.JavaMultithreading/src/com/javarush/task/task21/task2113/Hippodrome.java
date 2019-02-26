@@ -25,6 +25,7 @@ public class Hippodrome {
         horses.add(new Horse("Argo", 3, 0));
         game = new Hippodrome(horses);
         game.run();
+        game.printWinner();
     }
     public void run() {
         for (int i = 0; i < 100; i++) {
@@ -51,5 +52,21 @@ public class Hippodrome {
         for (int i = 0; i < 10; i++) {
             System.out.println();
         }
+    }
+
+    public Horse getWinner() {
+        Horse winner = null;
+        double maxDistance = 0;
+        for (Horse horse : horses) {
+            if (horse.getDistance() > maxDistance) {
+                maxDistance = horse.getDistance();
+                winner = horse;
+            }
+        }
+        return winner;
+    }
+
+    public void printWinner() {
+        System.out.println("Winner is " + getWinner().getName() + "!");
     }
 }
