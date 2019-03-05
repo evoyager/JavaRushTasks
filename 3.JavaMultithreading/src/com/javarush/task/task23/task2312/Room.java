@@ -57,9 +57,10 @@ public class Room {
         //Создаем объект "наблюдатель за клавиатурой" и стартуем его.
         KeyboardObserver keyboardObserver = new KeyboardObserver();
         keyboardObserver.start();
+        print();
 
         //пока змея жива
-        while (snake.isAlive()) {
+/*        while (snake.isAlive()) {
             //"наблюдатель" содержит события о нажатии клавиш?
             if (keyboardObserver.hasKeyEvents()) {
                 KeyEvent event = keyboardObserver.getEventFromTop();
@@ -84,6 +85,7 @@ public class Room {
             print();        //отображаем текущее состояние игры
             sleep();        //пауза между ходами
         }
+*/
 
         System.out.println("Game Over!");
     }
@@ -93,6 +95,26 @@ public class Room {
         //Рисуем все кусочки змеи
         //Рисуем мышь
         //Выводим все это на экран
+        int[][] map = new int[height][width];
+        for (int i = 0; i < width; i++) {
+            map[0][i] = 4;
+            map[height-1][i] = 4;
+        }
+        for (int j = 0; j < height; j++) {
+            map[j][0] = 4;
+            map[j][width-1] = 4;
+        }
+
+        for (int j = 0; j < height; j++) {
+            for (int i = 0; i < width; i++) {
+                if (map[j][i] == 4) {
+                    System.out.print(".");
+                } else if (map[j][i] == 0) {
+                    System.out.print(" ");
+                }
+            }
+            System.out.println();
+        }
     }
 
     public void eatMouse() {
