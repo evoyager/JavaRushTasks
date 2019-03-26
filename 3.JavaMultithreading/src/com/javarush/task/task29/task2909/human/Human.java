@@ -4,34 +4,31 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Human {
-    public static int nextId = 0;
+public class Human implements Alive {
+    private static int nextId = 0;
     private int id;
     protected int age;
     protected String name;
-    protected int course;
 
-    protected int[] size;
+    protected Size size;
 
-    protected boolean isSoldier;
-
-    public static final int FIRST = 1;
-    public static final int SECOND = 2;
-    public static final int THIRD = 3;
-    public static final int FOURTH = 4;
-    private int bloodGroup;
+    private BloodGroup bloodGroup;
     private List<Human> children = new ArrayList<>();
 
-    public void setBloodGroup(int code) {
-        bloodGroup = code;
+    public Human(String name, int age) {
+        this.name = name;
+        this.age = age;
     }
 
-    public int getBloodGroup() {
+    public void setBloodGroup(BloodGroup bloodGroup) {
+        this.bloodGroup = bloodGroup;
+    }
+
+    public BloodGroup getBloodGroup() {
         return bloodGroup;
     }
 
-    public Human(boolean isSoldier) {
-        this.isSoldier = isSoldier;
+    public Human() {
         this.id = nextId;
         nextId++;
     }
@@ -52,28 +49,14 @@ public class Human {
         this.name = name;
     }
 
-    public int getCourse() {
-        return course;
-    }
-
-    public void live() {
-        if (isSoldier)
-            fight();
-    }
-
-    public void fight() {
-    }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public void printSize() {
-        System.out.println("Рост: " + size[0] + " Вес: " + size[1]);
+        System.out.println("Рост: " + size.height + " Вес: " + size.weight);
     }
 
     public List<Human> getChildren() {
@@ -86,5 +69,23 @@ public class Human {
 
     public void removeChild(Human child) {
         children.remove(child);
+    }
+
+    @Override
+    public void live() {
+
+    }
+
+    public void printData() {
+        System.out.println(String.format("%s: %s", getPosition(), name));
+    }
+
+    public String getPosition() {
+        return "Человек";
+    }
+
+    public class Size {
+        public int height;
+        public int weight;
     }
 }
