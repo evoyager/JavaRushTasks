@@ -3,6 +3,7 @@ package com.javarush.task.task30.task3008;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -83,6 +84,27 @@ public class Server {
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 }
+            }
+        }
+
+        public void run() {
+            SocketAddress address = socket.getRemoteSocketAddress();
+            ConsoleHelper.writeMessage("Connection established with address " + address);
+            try(Connection connection = new Connection(socket)) {
+                socket.connect(address);
+                String name = serverHandshake(connection);
+                Message message = new Message(MessageType.USER_ADDED, name);
+                sendBroadcastMessage(message);
+                notifyUsers(connection, name);
+                serverMainLoop(connection, name);
+                connectionMap.remove(name);
+                message = new Message(MessageType.USER_REMOVED, name);
+                sendBroadcastMessage(message);
+                ConsoleHelper.writeMessage("Connection closed with remote address");
+            } catch (IOException e) {
+                ConsoleHelper.writeMessage("IOException occurs during data exchange with remote address");
+            } catch (ClassNotFoundException e) {
+                ConsoleHelper.writeMessage("ClassNotFoundException occurs during data exchange with remote address");
             }
         }
     }
