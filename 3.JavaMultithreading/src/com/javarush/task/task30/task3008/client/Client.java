@@ -18,6 +18,7 @@ public class Client {
     }
 
     protected String getServerAddress() {
+        ConsoleHelper.writeMessage("Введите хост: ");
         return ConsoleHelper.readString();
     }
 

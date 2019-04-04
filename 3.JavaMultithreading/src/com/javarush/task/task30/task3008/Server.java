@@ -12,26 +12,18 @@ public class Server {
     private static Map<String, Connection> connectionMap = new ConcurrentHashMap<>();
 
     public static void main(String[] args) {
+        ConsoleHelper.writeMessage("Введите порт сервера: ");
         int port = ConsoleHelper.readInt();
         try (ServerSocket serverSocket = new ServerSocket(port)) {
-            ConsoleHelper.writeMessage("Server is running.");
+            ConsoleHelper.writeMessage("Server started...");
             while (true) {
-                Socket socket = serverSocket.accept();
-                Handler handler = new Handler(socket);
-                handler.start();
+//                Socket socket = serverSocket.accept();
+//                Handler handler = new Handler(socket);
+//                handler.start();
+                new Handler(serverSocket.accept()).start();
             }
         } catch (Exception e) {
             ConsoleHelper.writeMessage("Something wrong, server socket closed.");
-        }
-    }
-
-    public static void sendBroadcastMessage(Message message) {
-        for (Entry<String, Connection> entry : connectionMap.entrySet()) {
-            try {
-                entry.getValue().send(message);
-            } catch (IOException e) {
-                ConsoleHelper.writeMessage("Message sending failed.");
-            }
         }
     }
 
@@ -40,6 +32,30 @@ public class Server {
 
         public Handler(Socket socket) {
             this.socket = socket;
+        }
+
+        @Override
+        public void run() {
+            SocketAddress address = socket.getRemoteSocketAddress();
+            if (socket != null && socket.getRemoteSocketAddress() != null) {
+                ConsoleHelper.writeMessage("Connection established to remote socket address: " + address);
+            }
+            try (Connection connection = new Connection(socket)) {
+                socket.connect(address);
+                String name = serverHandshake(connection);
+                Message message = new Message(MessageType.USER_ADDED, name);
+                sendBroadcastMessage(message);
+                notifyUsers(connection, name);
+                serverMainLoop(connection, name);
+                connectionMap.remove(name);
+                message = new Message(MessageType.USER_REMOVED, name);
+                sendBroadcastMessage(message);
+                ConsoleHelper.writeMessage("Connection closed with remote address");
+            } catch (IOException e) {
+                ConsoleHelper.writeMessage("IOException occurs during data exchange with remote address");
+            } catch (ClassNotFoundException e) {
+                ConsoleHelper.writeMessage("ClassNotFoundException occurs during data exchange with remote address");
+            }
         }
 
         private String serverHandshake(Connection connection) throws IOException, ClassNotFoundException {
@@ -86,25 +102,14 @@ public class Server {
                 }
             }
         }
+    }
 
-        public void run() {
-            SocketAddress address = socket.getRemoteSocketAddress();
-            ConsoleHelper.writeMessage("Connection established with address " + address);
-            try(Connection connection = new Connection(socket)) {
-                socket.connect(address);
-                String name = serverHandshake(connection);
-                Message message = new Message(MessageType.USER_ADDED, name);
-                sendBroadcastMessage(message);
-                notifyUsers(connection, name);
-                serverMainLoop(connection, name);
-                connectionMap.remove(name);
-                message = new Message(MessageType.USER_REMOVED, name);
-                sendBroadcastMessage(message);
-                ConsoleHelper.writeMessage("Connection closed with remote address");
+    public static void sendBroadcastMessage(Message message) {
+        for (Entry<String, Connection> entry : connectionMap.entrySet()) {
+            try {
+                entry.getValue().send(message);
             } catch (IOException e) {
-                ConsoleHelper.writeMessage("IOException occurs during data exchange with remote address");
-            } catch (ClassNotFoundException e) {
-                ConsoleHelper.writeMessage("ClassNotFoundException occurs during data exchange with remote address");
+                ConsoleHelper.writeMessage("Message sending failed.");
             }
         }
     }
