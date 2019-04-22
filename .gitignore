@@ -12,9 +12,8 @@ target/
 *.properties
 *.jar
 
-/4.JavaCollections/
-/5.OnlineInternship/
 /out/
 /JavaRushPlugin.properties
 /Instruction.png
 /out.log
+/out.log.*
