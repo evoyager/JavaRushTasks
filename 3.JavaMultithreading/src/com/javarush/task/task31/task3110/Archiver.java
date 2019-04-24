@@ -34,4 +34,5 @@ public class Archiver {
 
         return Operation.values()[ConsoleHelper.readInt()];
     }
+
 }
