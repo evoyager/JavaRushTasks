@@ -21,7 +21,6 @@ public class Archiver {
         } while (operation != Operation.EXIT);
     }
 
-
     public static Operation askOperation() throws IOException {
         ConsoleHelper.writeMessage("");
         ConsoleHelper.writeMessage("Выберите операцию:");
@@ -34,5 +33,4 @@ public class Archiver {
 
         return Operation.values()[ConsoleHelper.readInt()];
     }
-
 }
